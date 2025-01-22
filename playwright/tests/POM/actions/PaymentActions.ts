@@ -1,7 +1,9 @@
 import { expect, Page } from "@playwright/test"
 import { PaymentPage } from "../pages/PaymentPage"
 import { ConstantsData } from "../utils/Constants/ConstansData"
-import { RandomData } from "../utils/data/RandomData"
+import { RandomData } from "../utils/randomdata/RandomData"
+import { TextExpectFromHomePageDTO } from "../utils/models/TextExpectFromHomePageDTO"
+import { TextExpectFromAirfarePageDTO } from "../utils/models/TextExpectFromAirfarePageDTO"
 
 export class PaymentActions{
     readonly paymentPage : PaymentPage
@@ -16,8 +18,8 @@ export class PaymentActions{
             let listTextPaymentMethod = await this.paymentPage.elementPaymentMethods
             .locator("xpath=//child::div/div/div[contains(@class,'content-title')]/div/label").all()
             const randomNumberToPaymentMethod = RandomData.getRandomNumber(0,listTextPaymentMethod.length)
-            await listTextPaymentMethod[0].click({force:true})
-            if((await listTextPaymentMethod[0].innerText()).includes("crédito")){
+            await listTextPaymentMethod[randomNumberToPaymentMethod].click({force:true})
+            if((await listTextPaymentMethod[randomNumberToPaymentMethod].innerText()).includes("crédito")){
                 let numberCard = ConstantsData.arrayNumbersCreditCards[RandomData.getRandomNumber(0, ConstantsData.arrayNumbersCreditCards.length)]
                 await this.paymentPage.inputNumberCreditCard.fill(numberCard)
                 await this.paymentPage.inputCreditCardAdreess.fill("Adresss")
@@ -54,22 +56,28 @@ export class PaymentActions{
         async clickOnSomeOptionTravelInsurance(){
             await this.paymentPage.textCreditCard.waitFor()
             let listButtons = await this.paymentPage.travelInsuranceElement.locator("button").all()
-            await listButtons[RandomData.getRandomNumber(0,2)].click()
+            await listButtons[1].click()
         }
     
-        async checkInforOfFlightToBuyDetials(dateOut: string, acronymOut: string, dateReturn: string, acronymReturn: string, bundleOut : string, bundleReturn: string){
+        async checkInforOfFlightToBuyDetials(object: TextExpectFromHomePageDTO){
             let textDateOut = this.paymentPage.elementInfoOutFligt.locator("xpath=//child::div[contains(text(),'.')]")
-            await expect(textDateOut).toContainText(dateOut)
+            await expect(textDateOut).toBeVisible()
+            await expect(textDateOut).toContainText(object.getFormatDateOutToBuyDetails())
             let textAcronymOut = this.paymentPage.elementInfoOutFligt.locator("xpath=//child::div[2]/p/span[1]")
-            await expect(textAcronymOut).toContainText(acronymOut)
+            await expect(textAcronymOut).toBeVisible()
+            await expect(textAcronymOut).toHaveText(object.getAcronymOut())
     
             let textDateReturn = this.paymentPage.elementInfoReturnFlight.locator("xpath=//child::div[contains(text(),'.')]")
-            await expect(textDateReturn).toContainText(dateReturn)
+            await expect(textDateReturn).toBeVisible()
+            await expect(textDateReturn).toContainText(object.getFormatDateReturnToBuyDetails())
             let textAcronymReturn = this.paymentPage.elementInfoReturnFlight.locator("xpath=//child::div[2]/p/span[1]")
-            await expect(textAcronymReturn).toContainText(acronymReturn)
-    
-            await expect(this.paymentPage.textBundleOutFlight).toContainText(bundleOut)
-            await expect(this.paymentPage.textBundleReturnFlight).toContainText(bundleReturn)
+            await expect(textAcronymReturn).toBeVisible()
+            await expect(textAcronymReturn).toHaveText(object.getAcronymReturn())
+        }
+
+        async checkInfoOfBundlesToBuyDetails(object : TextExpectFromAirfarePageDTO){
+            await expect(this.paymentPage.textBundleOutFlight).toHaveText(object.getTextBundleOut())
+            await expect(this.paymentPage.textBundleReturnFlight).toHaveText(object.getTextBundleReturn())
         }
     
         async clickOnPayPopup(){

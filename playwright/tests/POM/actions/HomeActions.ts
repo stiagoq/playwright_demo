@@ -112,6 +112,14 @@ export class HomeActions{
         return listOriginAndDestination
     }
 
+    async joinAndReturnDatesOfFlightAndAcronym(){
+        let listInforFlights = new Array()
+        let listOfDates = await this.returnDateofFlight()
+        let listOfAcronym = await this.returnInfoOriginAndDestination()
+        listInforFlights = (listOfDates).concat(listOfAcronym)
+        return listInforFlights
+    }
+
     async selectLocalCoin(){
         if(!(await this.homePage.selectCoinButton.innerText()).includes("COP")){
             await this.homePage.selectCoinButton.click({delay:1000})

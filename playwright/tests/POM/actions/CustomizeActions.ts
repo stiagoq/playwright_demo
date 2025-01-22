@@ -1,6 +1,7 @@
 import { Page } from "@playwright/test";
 import { CustomizePage } from "../pages/CustomizePage";
-import { RandomData } from "../utils/data/RandomData";
+import { RandomData } from "../utils/randomdata/RandomData";
+import { UserDTO } from "../utils/models/UserDTO";
 
 export class CustomizeActions{
     readonly customizePage : CustomizePage
@@ -11,18 +12,18 @@ export class CustomizeActions{
         this.page = page
     }
 
-    async fillPassangerNamesAndLastnames(name:string, lastname:string, email:string, documentNumber:string, phoneNumber:string){
+    async fillPassangerNamesAndLastnames(object: UserDTO){
             await this.page.waitForSelector("//label[@for='name-1-1']", { state: 'visible' });
             let listNameInputs = await this.page.$$("//input[contains(@name,'name-') and @formcontrolname='firstName']")
             let listLastNameInputs = await this.page.$$("//input[contains(@name,'lastname-') and @formcontrolname='lastName']")
             let listNumberDocument = await this.page.$$("//input[@formcontrolname='identification']")
-            await this.customizePage.inputEmail.fill(email)
-            await this.customizePage.inputEmailConfirm.fill(email)
-            await this.customizePage.inputPhoneNumber.fill(phoneNumber)
+            await this.customizePage.inputEmail.fill(object.getEmail())
+            await this.customizePage.inputEmailConfirm.fill(object.getEmail())
+            await this.customizePage.inputPhoneNumber.fill(object.getPhoneNumber())
             for (let i = 0; i < listNameInputs.length; i++){
                 if(i==0){
-                    await listNameInputs[i].fill(name)
-                    await listLastNameInputs[i].fill(lastname)
+                    await listNameInputs[i].fill(object.getName())
+                    await listLastNameInputs[i].fill(object.getLastname())
                 }else{
                     await listNameInputs[i].fill(RandomData.getRandomName("User"))
                     await listLastNameInputs[i].fill(RandomData.getRandomName("User"))
@@ -31,7 +32,7 @@ export class CustomizeActions{
     
             for(let i = 0; i<listNumberDocument.length; i++){
                 if(i == 0 ){
-                    await listNumberDocument[i].fill(documentNumber)
+                    await listNumberDocument[i].fill(object.getDocumentNumber())
                 }else{
                     await listNumberDocument[i].fill(RandomData.getRandomNumber(3000000000, 311000000).toString())
                 }
@@ -87,7 +88,6 @@ export class CustomizeActions{
         async clickOnContinueButton(){
             await this.customizePage.continueButton.waitFor({state:'visible'})
             await this.customizePage.continueButton.click({delay: 1000})
-            
             if(await this.customizePage.popupYoungAdult.isVisible()){
                 await this.customizePage.continueBuyCheckbox.click()
                 await this.customizePage.continuePopupButton.click()

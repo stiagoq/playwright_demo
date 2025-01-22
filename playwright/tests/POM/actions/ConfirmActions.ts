@@ -1,5 +1,7 @@
 import { expect, Page } from "@playwright/test";
 import { ConfirmPage } from "../pages/ConfirmPage";
+import { UserDTO } from "../utils/models/UserDTO";
+import { TextExpectFromHomePageDTO } from "../utils/models/TextExpectFromHomePageDTO";
 
 export class ConfirmActions{
     readonly confirmPage : ConfirmPage
@@ -9,19 +11,19 @@ export class ConfirmActions{
         this.confirmPage = new ConfirmPage(page)
     }
 
-    async checkInforOfFlightToBuyDetials(dateOut: string, acronymOut: string, dateReturn: string, acronymReturn: string){
+    async checkInforOfFlightToBuyDetials(object: TextExpectFromHomePageDTO){
             await this.confirmPage.textAcronymOutFlight.waitFor({timeout:60000})
-            await expect(this.confirmPage.textInfoOfDateOutFlight).toContainText(dateOut)
-            await expect(this.confirmPage.textAcronymOutFlight).toContainText(acronymOut)
-            await expect(this.confirmPage.textInfoOfDateReturnFlight).toContainText(dateReturn)
-            await expect(this.confirmPage.textAcronymReturnFlight).toContainText(acronymReturn)
-
+            await expect(this.confirmPage.textInfoOfDateOutFlight).toContainText(object.getFormatDateOutToBuyDetails())
+            await expect(this.confirmPage.textAcronymOutFlight).toContainText(object.getAcronymOut())
+            await expect(this.confirmPage.textInfoOfDateReturnFlight).toContainText(object.getFormatDateReturnToBuyDetails())
+            await expect(this.confirmPage.textAcronymReturnFlight).toContainText(object.getFormatDateOutToBuyDetails())
     }
-    async checkInfoOfUser(titlePage: string, username: string, email:string, phoneNumber:string){
-        await expect(this.confirmPage.textTitlePage).toContainText(titlePage)
-        await expect(this.confirmPage.textPassagerName).toContainText(username)
-        await expect(this.confirmPage.textEmailPassager).toContainText(email)
-        await expect(this.confirmPage.textPhoneNumberPassager).toContainText(phoneNumber)
+    
+    async checkInfoOfUser(object : UserDTO){
+        await expect(this.confirmPage.textTitlePage).toContainText(object.getName())
+        await expect(this.confirmPage.textPassagerName).toContainText(object.getName())
+        await expect(this.confirmPage.textEmailPassager).toContainText(object.getEmail())
+        await expect(this.confirmPage.textPhoneNumberPassager).toContainText(object.getPhoneNumber())
     }
 
 }

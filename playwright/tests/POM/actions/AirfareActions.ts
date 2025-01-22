@@ -1,5 +1,6 @@
 import { Page, expect } from "@playwright/test";
 import { AirfarePage } from "../pages/AirfarePage";
+import { TextExpectFromHomePageDTO } from "../utils/models/TextExpectFromHomePageDTO";
 
 export class AirfareActions{
     readonly airfarePage : AirfarePage
@@ -38,9 +39,9 @@ export class AirfareActions{
         }
         
     
-        async checkDatesFlight(infoOut: string, infoReturn: string){
-            await expect(this.airfarePage.textInfoOutFlight).toContainText(infoOut)
-            await expect(this.airfarePage.textInfoRetutnFlight).toContainText(infoReturn)
+        async checkDatesFlight(object: TextExpectFromHomePageDTO){
+            await expect.soft(this.airfarePage.textInfoOutFlight).toHaveText(`${object.getCityOrigin()} a ${object.getCityDestination()} - ${object.getFormatDateOut()}`)
+            await expect.soft(this.airfarePage.textInfoRetutnFlight).toHaveText(`${object.getCityDestination()} a ${object.getCityOrigin()} - ${object.getFormatDateReturn()}`)
         }
     
         async clickContinueButton(){

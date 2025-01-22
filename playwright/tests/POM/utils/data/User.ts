@@ -1,5 +1,5 @@
 import { UserDTO } from "../models/UserDTO"
-import { RandomData } from "./RandomData"
+import { RandomData } from "../randomdata/RandomData"
 
 export class User{
     static generateUser(){

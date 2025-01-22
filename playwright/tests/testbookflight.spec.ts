@@ -6,12 +6,11 @@ import { CustomizeActions } from "./POM/actions/CustomizeActions";
 import { ChairsActions } from "./POM/actions/ChairsActions";
 import { PaymentActions } from "./POM/actions/PaymentActions";
 import { ConfirmActions } from "./POM/actions/ConfirmActions";
-
+import { TextExpectFromHomePage } from "./POM/utils/data/TextExpectFromHomePage";
+import { TextExpectFromAirfarePage } from "./POM/utils/data/TextExpectFromAirfarePage";
 
 let context : any
 let page : any 
-let textDatesFlights: any;
-let textOriginAndDestination: any;
 
 test.beforeAll(async ({ browser }) => {
     context = await browser.newContext();
@@ -24,9 +23,7 @@ test.afterAll(async ({browser}) =>{
 })
 
 test("book a flight on wingo", async () => {
-
     const homeActions = new HomeActions(page)
-
     await homeActions.clickOnFlyButton()
     await homeActions.selectFromDestination()
     await homeActions.clickOnFlyButton()
@@ -34,8 +31,7 @@ test("book a flight on wingo", async () => {
     await homeActions.selectNumberOfPassanger()
     await homeActions.selectDayOutAndReturnDay() 
     await homeActions.selectLocalCoin();
-    textDatesFlights = await homeActions.returnDateofFlight();
-    textOriginAndDestination = await homeActions.returnInfoOriginAndDestination();
+    let textExpectHomePage = TextExpectFromHomePage.getTextExpect(await homeActions.joinAndReturnDatesOfFlightAndAcronym())
     const [newPage] = await Promise.all([
         context.waitForEvent("page"),
         homeActions.clickOnFlightButton(),
@@ -50,15 +46,12 @@ test("book a flight on wingo", async () => {
 
     await airfareActions.clickOnacceptConditionsToInfantsButton();
     await airfareActions.selectTypeFlights();
-    let titleBundles = await airfareActions.returnNameOfBundles()
-    await airfareActions.checkDatesFlight(
-        `${textOriginAndDestination[0]} a ${textOriginAndDestination[1]} -  ${textDatesFlights[0]}`,
-        `${textOriginAndDestination[1]} a ${textOriginAndDestination[0]} -  ${textDatesFlights[1]}`
-    );
+    let textExpectAirfarePage = TextExpectFromAirfarePage.getTextExpect(await airfareActions.returnNameOfBundles())
+    await airfareActions.checkDatesFlight(textExpectHomePage)
     await airfareActions.clickContinueButton()
 
     let firstUser = User.generateUser()
-    await customizeActions.fillPassangerNamesAndLastnames(firstUser.getName(), firstUser.getLastname(), firstUser.getEmail(), firstUser.getDocumentNumber(), firstUser.getPhoneNumber())
+    await customizeActions.fillPassangerNamesAndLastnames(firstUser)
     await customizeActions.selectPassagerGenre()
     await customizeActions.selectDateBirthDatePassagers()
     await customizeActions.selectTravelWith()
@@ -73,15 +66,14 @@ test("book a flight on wingo", async () => {
     await paymentActions.clickOnSomeOptionTravelInsurance()
     let paymentMethod = await paymentActions.fillPaymentInfo()
     await paymentActions.clickOnAcceptTerms()
-    await paymentActions.
-    checkInforOfFlightToBuyDetials(textDatesFlights[2], textOriginAndDestination[2], textDatesFlights[3], textOriginAndDestination[3], 
-        titleBundles[0], titleBundles[1])
+    await paymentActions.checkInforOfFlightToBuyDetials(textExpectHomePage)
+    await paymentActions.checkInfoOfBundlesToBuyDetails(textExpectAirfarePage)
     await paymentActions.clickOnPayPopup()
     await paymentActions.clickOnPayContinue()
 
     if(paymentMethod=="efectivo"){
-     await comfirmActions.checkInforOfFlightToBuyDetials(textDatesFlights[2], textOriginAndDestination[2], textDatesFlights[3], textOriginAndDestination[3])
-    await comfirmActions.checkInfoOfUser(firstUser.getName(), firstUser.getName(), firstUser.getEmail(), firstUser.getPhoneNumber())
+     await comfirmActions.checkInforOfFlightToBuyDetials(textExpectHomePage)
+    await comfirmActions.checkInfoOfUser(firstUser)
     }
     
 });
