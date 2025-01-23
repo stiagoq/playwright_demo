@@ -58,6 +58,7 @@ jobs:
       run:  allure generate ./allure-results -o ./allure-report
 
     - name: Artifact to plawright report
+      id: artifact-playwright
       uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
@@ -66,6 +67,7 @@ jobs:
         retention-days: 30
 
     - name: Artifact to allure report
+      id: artifact-allure
       uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
@@ -73,10 +75,10 @@ jobs:
         path: allure-report/
         retention-days: 30
     
-    - name: Compress report folders
-      if: ${{ !cancelled() }}
-      run: |
-        zip -r reports.zip playwright-report allure-report
+    # - name: Compress report folders
+    #   if: ${{ !cancelled() }}
+    #   run: |
+    #     zip -r reports.zip playwright-report allure-report
 
     - name: Send mail
       uses: dawidd6/action-send-mail@v4
@@ -90,11 +92,14 @@ jobs:
             Hola,
 
             Este es un correo enviado automáticamente desde un workflow de GitHub Actions.
-            Adjunto encontrarás el archivo solicitado.
+            Aqui encontraras los link de descarga de los reportes
+
+            Playwright: ${{ steps.artifact-allure.outputs.artifact-url }}
+            Allure: ${{ steps.artifact-allure.outputs.artifact-url }}
 
             Saludos,
             GitHub Actions 
 
         to: stiagoqui@gmail.com
         from: ${{secrets.MAIL_USERNAME}}
-        attachments: reports.zip
+        #attachments: reports.zip
