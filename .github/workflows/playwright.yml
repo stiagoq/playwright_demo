@@ -19,10 +19,8 @@ on:
         type: string
 
   pull_request:
-  # push:
-  #   branches: [ main, master ]
-  # pull_request:
-  #   branches: [ main, master ]
+    types: [opened]
+
 jobs:
   test:
     timeout-minutes: 60
@@ -46,8 +44,13 @@ jobs:
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
 
-    - name: Run Playwright tests
+      if: ${{ github.event_name == 'workflow_dispatch'}}
+    - name: Run Playwright tests to file name and browser
       run: npx playwright test ${{ inputs.insert_test }} --project=${{ inputs.select_browser }}
+
+      if: ${{ github.event_name == 'pull_request'}}
+    - name: Run Playwright tests to file name and browser
+      run: npx playwright test 
 
     - name: Run allure report
       if: ${{ !cancelled() }}
@@ -68,3 +71,27 @@ jobs:
         name: allure-report
         path: allure-report/
         retention-days: 30
+    
+    - name: Compress report folders
+      run: |
+        zip -r reports.zip playwright-report allure-report
+
+    - name: Send mail
+      uses: dawidd6/action-send-mail@v4
+      with:
+        server_address: smtp.gmail.com
+        username: ${{secrets.MAIL_USERNAME}}
+        password: ${{secrets.MAIL_PASSWORD}}
+        subject: Github Actions job result of Playwright test
+        body: |
+            Hola,
+
+            Este es un correo enviado automáticamente desde un workflow de GitHub Actions.
+            Adjunto encontrarás el archivo solicitado.
+
+            Saludos,
+            GitHub Actions 
+
+        to: stiagoqui@gmail.com
+        from: ${{secrets.MAIL_USERNAME}}
+        attachments: reports.zip
