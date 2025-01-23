@@ -28,8 +28,8 @@ test("book a flight on wingo", async () => {
     await homeActions.selectFromDestination()
     await homeActions.clickOnFlyButton()
     await homeActions.selectToDestination()
-    await homeActions.selectNumberOfPassanger()
     await homeActions.selectDayOutAndReturnDay() 
+    await homeActions.selectNumberOfPassanger()
     await homeActions.selectLocalCoin();
     let textExpectHomePage = TextExpectFromHomePage.getTextExpect(await homeActions.joinAndReturnDatesOfFlightAndAcronym())
     const [newPage] = await Promise.all([

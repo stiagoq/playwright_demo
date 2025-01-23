@@ -30,7 +30,7 @@ export default defineConfig({
   
 
   use: {
-    // headless: false,
+    //  headless: false,
     /* Base URL to use in actions like `await page.goto('/')`. */
     // baseURL: 'http://127.0.0.1:3000',
 
@@ -54,7 +54,7 @@ export default defineConfig({
 
     {
       name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
+      use: { ...devices['Desktop Safari'], viewport: { width: 1680, height: 1050 } },
     },
 
     /* Test against mobile viewports. */
@@ -70,7 +70,7 @@ export default defineConfig({
     /* Test against branded browsers. */
     {
       name: 'Microsoft Edge',
-      use: { ...devices['Desktop Edge'], channel: 'msedge' },
+      use: { ...devices['Desktop Edge'], channel: 'msedge', viewport: { width: 1680, height: 1050 } },
     },
     // {
     //   name: 'Google Chrome',

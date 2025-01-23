@@ -16,13 +16,13 @@ export class ConfirmActions{
             await expect(this.confirmPage.textInfoOfDateOutFlight).toContainText(object.getFormatDateOutToBuyDetails())
             await expect(this.confirmPage.textAcronymOutFlight).toContainText(object.getAcronymOut())
             await expect(this.confirmPage.textInfoOfDateReturnFlight).toContainText(object.getFormatDateReturnToBuyDetails())
-            await expect(this.confirmPage.textAcronymReturnFlight).toContainText(object.getFormatDateOutToBuyDetails())
+            await expect(this.confirmPage.textAcronymReturnFlight).toContainText(object.getAcronymReturn())
     }
     
     async checkInfoOfUser(object : UserDTO){
         await expect(this.confirmPage.textTitlePage).toContainText(object.getName())
         await expect(this.confirmPage.textPassagerName).toContainText(object.getName())
-        await expect(this.confirmPage.textEmailPassager).toContainText(object.getEmail())
+        await expect(this.confirmPage.textEmailPassager).toHaveText(object.getEmail())
         await expect(this.confirmPage.textPhoneNumberPassager).toContainText(object.getPhoneNumber())
     }
 
