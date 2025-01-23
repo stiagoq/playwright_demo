@@ -24,7 +24,7 @@ on:
 jobs:
   test:
     timeout-minutes: 60
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
     - uses: actions/checkout@v4
 
@@ -44,7 +44,6 @@ jobs:
     - name: Install Playwright Browsers
       run: | 
         npx playwright install --with-deps
-        echo "${{github.event_name}}"
 
     - name: Run Playwright tests to file name and browser
       if: ${{ github.event_name == 'workflow_dispatch'}}
@@ -75,11 +74,13 @@ jobs:
         retention-days: 30
     
     - name: Compress report folders
+      if: ${{ !cancelled() }}
       run: |
         zip -r reports.zip playwright-report allure-report
 
     - name: Send mail
       uses: dawidd6/action-send-mail@v4
+      if: ${{ !cancelled() }}
       with:
         server_address: smtp.gmail.com
         username: ${{secrets.MAIL_USERNAME}}
