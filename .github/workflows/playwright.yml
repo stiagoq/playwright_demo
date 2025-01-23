@@ -42,7 +42,9 @@ jobs:
          npm install -D allure-playwright
 
     - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
+      run: | 
+        npx playwright install --with-deps
+        echo "${{github.event_name}}"
 
       if: ${{ github.event_name == 'workflow_dispatch'}}
     - name: Run Playwright tests to file name and browser
