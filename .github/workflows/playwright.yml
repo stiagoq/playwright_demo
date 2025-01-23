@@ -49,7 +49,7 @@ jobs:
       if: ${{ github.event_name == 'workflow_dispatch'}}
       run: npx playwright test ${{ inputs.insert_test }} --project=${{ inputs.select_browser }}
 
-    - name: Run Playwright tests to file name and browser
+    - name: Run Playwright tests 
       if: ${{ github.event_name == 'pull_request'}}
       run: npx playwright test 
 
