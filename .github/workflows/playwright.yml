@@ -51,7 +51,7 @@ jobs:
 
     - name: Run allure report
       if: ${{ !cancelled() }}
-      run:  allure generate allure-report --clean
+      run:  allure generate ./allure-results -o ./allure-report
 
     - name: Artifact to plawright report
       uses: actions/upload-artifact@v4
