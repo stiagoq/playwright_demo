@@ -48,6 +48,7 @@ jobs:
       run: npx playwright test ${{ inputs.insert_test }} --project=${{ inputs.select_browser }}
 
     - name: Run allure report
+      if: ${{ !cancelled() }}
       run:  allure generate --clean
 
     - name: Artifact to plawright report
