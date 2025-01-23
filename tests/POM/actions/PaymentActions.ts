@@ -1,6 +1,6 @@
 import { expect, Page } from "@playwright/test"
 import { PaymentPage } from "../pages/PaymentPage"
-import { ConstantsData } from "../utils/Constants/ConstansData"
+import { ConstantsData } from "../utils/constants/ConstansData"
 import { RandomData } from "../utils/randomdata/RandomData"
 import { TextExpectFromHomePageDTO } from "../utils/models/TextExpectFromHomePageDTO"
 import { TextExpectFromAirfarePageDTO } from "../utils/models/TextExpectFromAirfarePageDTO"
